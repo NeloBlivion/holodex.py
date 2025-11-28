@@ -745,20 +745,6 @@ class BaseVideo:
     async def remove_mention(self, channel):
         return await self.remove_mentions(self.id, channel)
 
-    async def is_members(self):
-        data = await self.client.static("https://youtube.com/watch?v=" + self.id, base=False)
-        # if data.status != 200: raise
-        page = await data.text()
-        soup = BeautifulSoup(page, "html.parser")
-        j = soup.find_all("script")
-        k = (list(filter(lambda x: "playabilityStatus" in str(x), j)))
-        pattern = re.compile(r"var ytInitialPlayerResponse = (.*?);$", re.MULTILINE | re.DOTALL)
-        var = pattern.search(k[0].text)
-        raw = var.group(1)
-        final = loads(raw)
-        reason = final.get("playabilityStatus", {}).get("reason", "")
-        return "get access to members-only content" in reason
-
 class Streamable(BaseVideo):
 
     def __init__(self, client: HolodexClient, data: dict):
